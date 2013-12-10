@@ -1,12 +1,13 @@
 #include <vector>
 #include <thread>
-#include "Base_elem.hpp"
+#include "Elem_base.hpp"
 #include <algorithm>
 #include <list>
 #include <iostream>
+#include <math.h>
 using namespace std;
 
-//how to use  f(x,y) = h(x,y) + g(x,y)
+//how to use f(x,y) = h(x,y) + g(x,y)
 
 
 Base source;
@@ -15,31 +16,31 @@ Base target;
 int step;
 
 
-	double function_h(Base & now){
-		return (abs(source.x-now.x)+abs(source.y-now.y));
-	}
+double function_h(Base & now){
+	return (abs(source.x-now.x)+abs(source.y-now.y));
+}
 
-	double function_g(Base & now){
-		return (abs(target.x-now.x)+abs(target.y-now.y));
-	}
+double function_g(Base & now){
+	return sqrt(abs(target.x-now.x)*abs(target.x-now.x)+abs(target.y-now.y)*abs(target.y-now.y));
+}
 
-	void updata_current(Base & now){
-		current.f_value = now.f_value;
-		current.high = now.high;
-		current.open_close = now.open_close;
-		current.speed = now.speed;
-		current.x = now.x;
-		current.y = now.y;
+void updata_current(Base & now){
+	current.f_value = now.f_value;
+	current.high = now.high;
+	current.open_close = now.open_close;
+	current.speed = now.speed;
+	current.x = now.x;
+	current.y = now.y;
 
-	}
-	double function_f(Base & now){
-		updata_current(now);
-		return (function_h(now)+function_g(now));
-	}
+}
+double function_f(Base & now){
+	updata_current(now);
+	return (function_h(now)+function_g(now));
+}
 #if 0
-	typedef double (*g)(int x,int y);
-	typedef double (*h)(int x,int y);
-	typedef double (*f)(int x,int y);  
+typedef double (*g)(int x,int y);
+typedef double (*h)(int x,int y);
+typedef double (*f)(int x,int y);
 #endif // 0
 
 bool compare_two_base(const Base& first,const Base &second){
@@ -54,7 +55,7 @@ class Compare
 {
 public:
 	bool operator()(const Base& first,Base& second){
-		if ((first.f_value<second.f_value))
+		if ((first.f_value>second.f_value))
 		{
 			return true;
 		}
@@ -71,7 +72,7 @@ public:
 	{
 
 	}
-	void updata_openlist(){  
+	void updata_openlist(){
 		for(auto itr =openlist.begin(),end=openlist.end();itr != end;itr++)
 		{
 			itr->f_value= function_f(*itr);
@@ -79,23 +80,23 @@ public:
 		}
 		std::sort(openlist.begin(),openlist.end(),Compare());
 	}
-	
 
-	bool find_in_openlist(Base & find){
+
+	bool find_in_openlist(Base  find){
 		//std::find(openlist.begin(),openlist.end(),find);
 		for(auto itr =openlist.begin(),end=openlist.end();itr != end;itr++)
 		{
-			if((itr->x==find.x)&&(itr->y==find.y)) 
+			if((itr->x==find.x)&&(itr->y==find.y))
 			{
 				return true;
 			}
 		}
 		return false;
 	}
-	bool find_in_closelist(Base & find){
+	bool find_in_closelist(Base  find){
 		for(auto itr =closelist.begin(),end=closelist.end();itr != end;itr++)
 		{
-			if((itr->x==find.x)&&(itr->y==find.y)) 
+			if((itr->x==find.x)&&(itr->y==find.y))
 			{
 				return true;
 			}
@@ -105,7 +106,7 @@ public:
 	}
 
 #if 0
-	typedef int(*compare)(const void *,const void *) ;  
+	typedef int(*compare)(const void *,const void *) ;
 
 
 
@@ -114,9 +115,9 @@ public:
 	{
 		if ((!first.open_close)||(!second.open_close))
 		{
-			printf("param have trouble  %x = :",((!first.open_close)||(!second.open_close)));
+			printf("param have trouble %x = :",((!first.open_close)||(!second.open_close)));
 			return 0;
-		} 
+		}
 		else
 		{
 			first.f_value=function_f(first.x,first.y);
@@ -125,14 +126,17 @@ public:
 		}
 	}
 #endif // 0
-	void Generate_next_step(Base &now){
+	void Generate_next_step(Base now){
 		Base now_up(now.x,now.y-1);
 		if (new_map.check_out_of_map(now_up))
 		{
 			now_up.f_value=function_f(now_up);
 			if (!find_in_openlist(now_up))
 			{
-				openlist.push_back(now_up);
+				if (!find_in_closelist(now_up))
+				{
+					openlist.push_back(now_up);
+				}
 			}
 		}
 		Base now_down(now.x,now.y+1);
@@ -141,7 +145,10 @@ public:
 			now_down.f_value=function_f(now_down);
 			if (!find_in_openlist(now_down))
 			{
-				openlist.push_back(now_down);
+				if (!find_in_closelist(now_down))
+				{
+					openlist.push_back(now_down);
+				}
 			}
 		}
 		Base now_left(now.x-1,now.y);
@@ -150,7 +157,10 @@ public:
 			now_left.f_value=function_f(now_left);
 			if (!find_in_openlist(now_left))
 			{
-				openlist.push_back(now_left);
+				if (!find_in_closelist(now_left))
+				{
+					openlist.push_back(now_left);
+				}
 			}
 		}
 		Base now_right(now.x+1,now.y);
@@ -159,7 +169,10 @@ public:
 			now_right.f_value=function_f(now_right);
 			if (!find_in_openlist(now_right))
 			{
-				openlist.push_back(now_right);
+				if (!find_in_closelist(now_right))
+				{
+					openlist.push_back(now_right);
+				}
 			}
 		}
 
@@ -172,7 +185,7 @@ public:
 		if ((first.x==second.x)&&(first.y==second.y))
 		{
 			return true;
-		} 
+		}
 		return false;
 	}
 
@@ -191,7 +204,7 @@ public:
 		{
 			return;
 		}
-		current  = source;
+		current = source;
 		cout<<"target :("<<target.x<<" , "<<target.y<<")"<<endl;
 		while (!check_equal(current,target))
 		{
@@ -200,17 +213,17 @@ public:
 			if (!find_in_closelist(current))
 			{
 
-			} 
+			}
 			else
 			{
 				closelist.push_back(current);
-			}  
+			}
 #endif // 0
 			closelist.push_back(current);
 			Generate_next_step(current);
 			updata_openlist();
-			current = *openlist.begin();
-			openlist.pop_front();
+			current = *(openlist.begin());
+			openlist.clear();
 		}
 
 	}
@@ -218,10 +231,8 @@ public:
 
 protected:
 private:
-	std::list<Base> openlist;//准备探索的路线
-	std::list<Base> closelist;//已经确定的路线
+	std::vector<Base> openlist;//准备探索的路线
+	std::vector<Base> closelist;//已经确定的路线
 	Map new_map;//主要起限定作用
 };
-
-
 
