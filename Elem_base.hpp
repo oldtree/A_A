@@ -7,34 +7,34 @@ public:
 	Base()
 		:x(0),y(0){
 	}
-	 Base(int x_,int y_)
+	Base(int x_,int y_)
 		:x(x_),y(y_){
 	}
 #if 0
-	 explicit Base(Base& other){
-		 this->f_value = other.f_value;
-		 this->high = other.high;
-		 this->open_close = other.open_close;
-		 this->speed = other.speed;
-		 this->x = other.x;
-		 this->y = other.y;
-	 }  
+	explicit Base(Base& other){
+		this->f_value = other.f_value;
+		this->high = other.high;
+		this->open_close = other.open_close;
+		this->speed = other.speed;
+		this->x = other.x;
+		this->y = other.y;
+	}
 #endif // 0
 
 #if 0
-	 bool operator<(Base &other){
-		 return (this->f_value<other.f_value);
-	 }
-	 bool operator<=(Base &other){
-		 return (this->f_value<=other.f_value);
-	 }
-	 bool operator==(Base &other){
-		 return (this->f_value==other.f_value);
-	 }
-	 bool operator>(Base &other){
-		 return (this->f_value > other.f_value);
-	 }  
-#endif // 
+	bool operator<(Base &other){
+		return (this->f_value<other.f_value);
+	}
+	bool operator<=(Base &other){
+		return (this->f_value<=other.f_value);
+	}
+	bool operator==(Base &other){
+		return (this->f_value==other.f_value);
+	}
+	bool operator>(Base &other){
+		return (this->f_value > other.f_value);
+	}
+#endif //
 
 	Base& operator=( Base & other){
 		this->f_value = other.f_value;
@@ -57,8 +57,8 @@ public:
 class Map
 {
 public:
-	Map() :width(10),heigh(10){		
-		
+	Map() :width(10),heigh(10){                
+
 		for (int i=0;i<10;i++)
 		{
 			Base_ptr.push_back(std::vector<Base>());
@@ -95,8 +95,8 @@ public:
 		if (position.x<0||position.y<0||position.x>=width||position.y>=heigh)
 		{
 			return false;
-		} 
-			return true;
+		}
+		return true;
 	}
 protected:
 private:
