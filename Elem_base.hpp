@@ -1,6 +1,11 @@
+
+#pragma once
 #include <stdlib.h>
 #include <vector>
-#pragma once
+#include <iomanip>
+#include <iostream>
+
+using namespace std;
 class Base
 {
 public:
@@ -49,7 +54,7 @@ public:
 	double high;
 	int x;
 	int y;
-	bool open_close;
+	bool open_close;  //open ture--close false
 	double f_value;
 };
 
@@ -65,7 +70,15 @@ public:
 			for (int j=0;j<10;j++)
 			{
 				Base_ptr[i].push_back(Base(i,j));
-				Base_ptr[i][j].high=0;
+				
+				if ((i <8)&&(i>=0)	&&(j <7)&&(j>2))
+				{
+					Base_ptr[i][j].high=1;
+				} 
+				else
+				{
+					Base_ptr[i][j].high=0;
+				}
 			}
 		}
 		std::vector<Base>::iterator x_iter =Base_ptr.begin()->begin();
@@ -90,6 +103,22 @@ public:
 
 	double get_positioin_speed(int x,int y){
 		return Base_ptr[x][y].speed;
+	}
+	void print_map(){
+		cout<<endl<<setw(2);
+		for (int i=0;i<10;i++)
+		{
+			for (int j=0;j<10;j++)
+			{
+				cout<<Base_ptr[i][j].high<<setw(2);
+				if (j==9)
+				{
+					cout<<endl;
+				}
+
+			}
+		}
+		cout<<endl;
 	}
 	bool check_out_of_map(Base &position){
 		if (position.x<0||position.y<0||position.x>=width||position.y>=heigh)
