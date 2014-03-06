@@ -51,7 +51,9 @@ bool initAll(TrieNode *root){
 		 initNode(root->next[i]);
 
 		 root->next[i]->nodeop = char('a'+(char)i);
-		 //cout<<char('a'+(char)i)<<endl;
+	 }
+	 for (unsigned int i = 0; i < MAX_CHAR; i++)
+	 {
 		 for (unsigned int j = 0; j < MAX_CHAR; j++)
 		 {
 			 root->next[i]->next[j] = root->next[j]; 
@@ -89,11 +91,16 @@ void Read_disk(const string content ){
 	 CharNode * first_temp = nullptr;
 	 first->count++;
 	 first_temp = first;
-	 do{
-
-		n++;
+	 n++;
+	 while (test[n]){
 		first_temp = first_temp->next[(test[n]-'a')];
 		first_temp->next[(test[n]-'a')]->count++ ;
-		
-	 }while (test[n]);
+		n++;
+	 }
 }
+
+
+
+
+
+
